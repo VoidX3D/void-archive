@@ -42,5 +42,9 @@ next-env.d.ts
 
 # VoidArchive
 Assets/
+assets/Processed/
 scripts/venv/
 scripts/__pycache__/
+
+# Local ratings store
+.ratings.json
