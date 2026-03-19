@@ -256,11 +256,56 @@ export default function Home() {
            </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-[280px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-[320px]">
           {filteredProjects.map((proj, idx) => (
             <BentoCard key={proj.id} project={proj} delay={idx * 0.05} />
           ))}
         </div>
+
+        {/* 6. Discover Flow (SlidesCarnival Style Footer Section) */}
+        <section className="mt-40 pt-20 border-t border-black/5">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+              <div>
+                 <h2 className="text-5xl font-black tracking-tighter mb-8 leading-none">The Science of <br/> Architectural Design</h2>
+                 <p className="text-xl text-black/50 font-medium leading-relaxed mb-10">
+                    Every project in the VoidArchive is more than just a presentation. It is a captured moment of academic labor, extracted through high-fidelity LibreOffice pipelines to preserve font geometry and transition logic.
+                 </p>
+                 <div className="flex gap-10">
+                    <div>
+                       <div className="text-4xl font-black text-[#6750A4] mb-2">{safeProjects.length}</div>
+                       <div className="text-xs font-black uppercase tracking-widest opacity-40">Projects</div>
+                    </div>
+                    <div>
+                       <div className="text-4xl font-black text-blue-600 mb-2">100%</div>
+                       <div className="text-xs font-black uppercase tracking-widest opacity-40">Authentic</div>
+                    </div>
+                    <div>
+                       <div className="text-4xl font-black text-orange-600 mb-2">24/7</div>
+                       <div className="text-xs font-black uppercase tracking-widest opacity-40">Available</div>
+                    </div>
+                 </div>
+              </div>
+              <div className="bg-[#6750A4]/5 rounded-[60px] p-12 lg:p-16 border border-[#6750A4]/10 relative overflow-hidden group">
+                 <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#6750A4]/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000" />
+                 <h3 className="text-2xl font-black mb-6 relative z-10 text-[#6750A4]">How to use this Archive?</h3>
+                 <ul className="space-y-6 relative z-10">
+                    {[
+                      { t: "Interrogate", d: "Use the global search to find specific subject legacies." },
+                      { t: "Examine", d: "Enter the Exhibition view for a cinema-grade slide experience." },
+                      { t: "Archive", d: "Download the original raw assets for offline preservation." }
+                    ].map((step, i) => (
+                       <li key={i} className="flex gap-5">
+                          <div className="w-8 h-8 rounded-full bg-[#6750A4] text-white flex items-center justify-center shrink-0 font-black text-xs">{i+1}</div>
+                          <div>
+                             <h4 className="font-black text-sm uppercase tracking-widest">{step.t}</h4>
+                             <p className="text-sm opacity-50 font-medium">{step.d}</p>
+                          </div>
+                       </li>
+                    ))}
+                 </ul>
+              </div>
+           </div>
+        </section>
       </main>
     </div>
   );
@@ -278,9 +323,9 @@ function BentoCard({ project, delay }: { project: any, delay: number }) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       className={cn(
-        "relative rounded-[32px] overflow-hidden group border border-white/50 bg-white transition-all duration-500",
+        "relative rounded-[40px] overflow-hidden group border border-white/50 bg-white transition-all duration-500",
         isHeavy ? "sm:col-span-2 sm:row-span-2" : "col-span-1 row-span-1",
-        hover ? "shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] -translate-y-2 ring-2 ring-[#6750A4]/20" : "shadow-lg shadow-black/5"
+        hover ? "shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] -translate-y-3 ring-2 ring-[#6750A4]/20" : "shadow-lg shadow-black/5"
       )}
     >
       <Link href={`/projects/${project.id}`} className="block w-full h-full absolute inset-0">
@@ -328,8 +373,13 @@ function BentoCard({ project, delay }: { project: any, delay: number }) {
         <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 sm:p-8 transition-transform duration-500 transform translate-y-2 group-hover:translate-y-0">
            
            <div className="flex justify-between items-start mb-auto opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-4 group-hover:translate-y-0">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-xl backdrop-blur-md bg-white/20 border border-white/30">
-                 <Info size={16} />
+              <div className="flex gap-2">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-xl backdrop-blur-md bg-white/20 border border-white/30 hover:bg-[#6750A4] transition-colors">
+                  <Info size={16} />
+                </div>
+                <div className="px-4 py-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[10px] font-black text-white uppercase tracking-widest">
+                  {project.subject || "General"}
+                </div>
               </div>
               <div className="flex gap-1 text-yellow-500 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full">
                 <Star size={12} fill="currentColor" />
