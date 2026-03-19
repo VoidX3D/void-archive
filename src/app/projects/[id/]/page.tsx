@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, Download, Eye, Clock, 
   Calendar, FileText, Share2, Star, 
-  ChevronRight, ExternalLink, Info, CheckCircle2
+  ChevronRight, ExternalLink, Info, CheckCircle2,
+  Video, Play, ThumbsUp, MessageSquare, Plus, Minus
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -14,6 +15,7 @@ export default function ProjectDescription() {
   const { id } = useParams();
   const [project, setProject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"slides" | "video" | "info">("slides");
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -31,204 +33,205 @@ export default function ProjectDescription() {
     fetchProject();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FDF7FF] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#6750A4]/20 border-t-[#6750A4] rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen bg-[#FDF7FF] flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-[#6750A4]/20 border-t-[#6750A4] rounded-full animate-spin" />
+    </div>
+  );
 
-  if (!project) {
-    return (
-      <div className="min-h-screen bg-[#FDF7FF] flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="text-4xl font-black mb-4">Archive Entry Not Found</h1>
-        <Link href="/" className="text-[#6750A4] font-bold flex items-center gap-2">
-          <ArrowLeft size={20} /> Return to Vault
-        </Link>
-      </div>
-    );
-  }
+  if (!project) return (
+    <div className="min-h-screen bg-[#FDF7FF] flex flex-col items-center justify-center p-6 text-center">
+      <h1 className="text-4xl font-black mb-4 tracking-tighter">Vault Entry Missing</h1>
+      <Link href="/" className="text-[#6750A4] font-black uppercase tracking-widest text-xs flex items-center gap-2">
+        <ArrowLeft size={16} /> Re-enter Archives
+      </Link>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-[#FDF7FF] text-[#1D1B20] selection:bg-[#6750A4]/20 selection:text-[#6750A4]">
+    <div className="min-h-screen bg-[#FDF7FF] text-[#1D1B20] selection:bg-[#6750A4]/20 selection:text-[#6750A4] font-sans">
       
-      {/* 1. Dynamic Header */}
-      <header className="fixed top-0 left-0 right-0 z-[100] bg-white/70 backdrop-blur-xl border-b border-[#1D1B20]/5 px-6 lg:px-12 py-4">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-          <Link href="/" className="group flex items-center gap-3 text-sm font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-all">
-            <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center group-hover:bg-[#6750A4] group-hover:text-white transition-all">
+      {/* 1. Static Navigation Bar */}
+      <header className="fixed top-0 left-0 right-0 z-[100] bg-white/80 backdrop-blur-2xl border-b border-black/5 px-6 lg:px-12 py-3">
+        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <Link href="/" className="p-2.5 rounded-full hover:bg-black/5 transition-all text-black/60">
               <ArrowLeft size={18} />
-            </div>
-            Back to Archive
-          </Link>
-          <div className="flex gap-4">
-             <button className="p-3 rounded-full hover:bg-black/5 transition-all text-black/40 hover:text-[#6750A4]">
-                <Share2 size={20} />
-             </button>
-             <button className="p-3 rounded-full hover:bg-black/5 transition-all text-black/40 hover:text-yellow-500">
-                <Star size={20} />
-             </button>
+            </Link>
+            <div className="h-6 w-px bg-black/5" />
+            <h1 className="font-black text-sm tracking-tight hidden sm:block truncate max-w-[200px]">{project.title}</h1>
+          </div>
+          
+          <div className="flex items-center gap-4">
+             <div className="flex bg-black/5 p-1 rounded-full">
+                {["slides", "video", "info"].map((tab) => (
+                   <button 
+                     key={tab}
+                     onClick={() => setActiveTab(tab as any)}
+                     className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                       activeTab === tab ? "bg-white text-[#6750A4] shadow-sm" : "text-black/40 hover:text-black/60"
+                     }`}
+                   >
+                     {tab}
+                   </button>
+                ))}
+             </div>
           </div>
         </div>
       </header>
 
-      <main className="pt-32 pb-40 px-6 lg:px-12 max-w-[1400px] mx-auto">
+      <main className="pt-24 pb-40 px-6 lg:px-12 max-w-[1600px] mx-auto">
         
-        {/* 2. Hero Section: Split Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 mb-20">
-          
-          {/* Left: Preview & Visuals */}
-          <div className="lg:col-span-7 space-y-8">
-            <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               className="relative aspect-video rounded-[40px] overflow-hidden shadow-2xl shadow-purple-900/10 border border-black/5 group"
-            >
-               <img 
-                 src={getPublicUrl(project.id, project.thumbnail || "slide_0.webp")} 
-                 className="w-full h-full object-cover" 
-                 alt="Main Preview" 
-               />
-               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                  <Link 
-                    href={`/projects/${id}/view`}
-                    className="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm shadow-2xl hover:scale-110 transition-transform active:scale-95"
-                  >
-                     <Eye size={20} />
-                     Enter Exhibition
-                  </Link>
-               </div>
-            </motion.div>
+        {/* 2. Main Stage (Canva/SlidesCarnival Style) */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
+           
+           {/* Left Content Area (Slides / Video) */}
+           <div className="xl:col-span-8 space-y-12">
+              
+              <AnimatePresence mode="wait">
+                 {activeTab === "slides" && (
+                    <motion.div 
+                      key="slides"
+                      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                      className="space-y-12"
+                    >
+                       {/* Full Feature Presentation Display */}
+                       {(project.slides || []).map((slide: string, idx: number) => (
+                          <div key={idx} className="bg-white rounded-[40px] p-8 lg:p-12 shadow-xl shadow-black/5 border border-black/5 group">
+                             <div className="flex items-center justify-between mb-8">
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#6750A4]">Asset Archival 00{idx + 1}</span>
+                                <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                   <button className="p-2 hover:bg-black/5 rounded-full transition-colors"><Plus size={16} /></button>
+                                   <button className="p-2 hover:bg-black/5 rounded-full transition-colors"><Minus size={16} /></button>
+                                </div>
+                             </div>
+                             <div className="relative aspect-video rounded-3xl overflow-hidden border border-black/5 bg-[#F9F9F9] shadow-inner mb-8">
+                                <img 
+                                  src={getPublicUrl(project.id, slide)} 
+                                  className="w-full h-full object-contain" 
+                                  alt={`Slide ${idx + 1}`} 
+                                />
+                             </div>
+                             
+                             {/* Comment/Caption Section */}
+                             <div className="pt-8 border-t border-black/5 flex flex-col sm:flex-row gap-8 items-start">
+                                <div className="hidden sm:block w-12 h-12 rounded-2xl bg-[#6750A4]/10 flex items-center justify-center text-[#6750A4] font-black">{idx + 1}</div>
+                                <div className="flex-1">
+                                   <h4 className="font-black text-xl mb-4 tracking-tight">Slide Execution Context</h4>
+                                   <p className="text-[#1D1B20]/50 font-medium leading-relaxed max-w-2xl">
+                                      This segment precisely preserves the transition geometry and master font stack 
+                                      recorded during the <b>{project.title}</b> archival process. Optimized for high-DPI viewing 
+                                      within the VoidOS terminal.
+                                   </p>
+                                   <div className="flex gap-6 mt-8">
+                                      <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#6750A4]"><ThumbsUp size={14}/> Accurate</button>
+                                      <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-black/40"><MessageSquare size={14}/> Context</button>
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+                       ))}
+                    </motion.div>
+                 )}
 
-            {/* Micro Gallery */}
-            <div className="grid grid-cols-4 gap-4">
-               {(project.slides || []).slice(0, 4).map((slide, i) => (
-                  <div key={i} className="aspect-video rounded-2xl overflow-hidden border border-black/5 opacity-60 hover:opacity-100 transition-all cursor-pointer">
-                     <img src={getPublicUrl(project.id, slide)} className="w-full h-full object-cover" alt="Slide preview" />
-                  </div>
-               ))}
-            </div>
-          </div>
+                 {activeTab === "video" && (
+                    <motion.div 
+                      key="video"
+                      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                      className="bg-white rounded-[60px] p-12 lg:p-20 shadow-xl shadow-black/5 border border-black/5 text-center flex flex-col items-center"
+                    >
+                       <div className="w-24 h-24 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-10">
+                          <Video size={40} />
+                       </div>
+                       <h2 className="text-4xl font-black mb-6 tracking-tighter leading-none">Canva-Edition Reel Generator</h2>
+                       <p className="text-xl text-black/40 max-w-xl mx-auto mb-12 font-medium">
+                          Our AI Teaser Pipeline is currently rendering the movement metadata for this project. Check back shortly for the high-res WebM cinematic.
+                       </p>
+                       {project.teaser && (
+                         <div className="relative w-full aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl group border-[12px] border-black/5">
+                            <img src={getPublicUrl(project.id, project.thumbnail || "slide_0.webp")} className="w-full h-full object-cover opacity-40 blur-sm" alt="Teaser Preview" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                               <button className="w-24 h-24 rounded-full bg-white text-[#6750A4] flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95">
+                                  <Play size={40} fill="currentColor" className="ml-2" />
+                               </button>
+                            </div>
+                         </div>
+                       )}
+                    </motion.div>
+                 )}
+              </AnimatePresence>
+           </div>
 
-          {/* Right: Metadata & Stats */}
-          <div className="lg:col-span-5 flex flex-col justify-center">
-             <div className="inline-flex items-center gap-2 text-[#6750A4] font-black uppercase tracking-[0.3em] text-[10px] mb-4 bg-[#6750A4]/5 px-4 py-2 rounded-full w-fit">
-                <CheckCircle2 size={12} />
-                Archival Verified
-             </div>
-             
-             <h1 className="text-5xl sm:text-6xl font-black tracking-tight mb-6 leading-tight text-[#1D1B20]">
-                {project.title.replace(/\.[^/.]+$/, "").replace(/_/g, " ")}
-             </h1>
+           {/* Right Column: Sticky Metadata & Specs */}
+           <div className="xl:col-span-4">
+              <div className="sticky top-28 space-y-8">
+                 
+                 {/* Main Identity Card */}
+                 <div className="bg-white rounded-[40px] p-8 lg:p-10 shadow-xl shadow-black/5 border border-black/5">
+                    <div className="inline-flex items-center gap-2 text-[#6750A4] font-black uppercase tracking-[0.3em] text-[10px] mb-6 bg-[#6750A4]/5 px-4 py-2 rounded-full w-fit">
+                       <CheckCircle2 size={12} />
+                       Official Integrity
+                    </div>
+                    <h2 className="text-3xl font-black mb-6 tracking-tight leading-tight">{project.title.replace(/\.pptx|\.pdf/gi, "")}</h2>
+                    
+                    <div className="flex items-center gap-4 mb-10 p-4 bg-black/5 rounded-3xl">
+                       <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#6750A4]">
+                          <Clock size={20} />
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-xs font-black uppercase tracking-widest opacity-40">Capture Date</span>
+                          <span className="text-sm font-black">{new Date(project.creation_date).toLocaleDateString()}</span>
+                       </div>
+                    </div>
 
-             <p className="text-lg text-[#1D1B20]/60 leading-relaxed mb-10 font-medium">
-                A meticulously preserved digital archive of Sincere Bhattarai&apos;s masterpiece. 
-                This presentation covers the intricacies of <b>{project.subject || "The Subject"}</b> with academic precision and visual excellence.
-             </p>
+                    <div className="space-y-4 mb-10">
+                       <div className="flex justify-between items-center px-4 py-2 text-sm font-bold opacity-60">
+                          <span>Slide Count</span>
+                          <span>{project.slide_count}</span>
+                       </div>
+                       <div className="w-full h-px bg-black/5" />
+                       <div className="flex justify-between items-center px-4 py-2 text-sm font-bold opacity-60">
+                          <span>Subject</span>
+                          <span>{project.subject || "General"}</span>
+                       </div>
+                       <div className="w-full h-px bg-black/5" />
+                       <div className="flex justify-between items-center px-4 py-2 text-sm font-bold opacity-60">
+                          <span>Archive ID</span>
+                          <span>{id?.toString().slice(0, 8)}...</span>
+                       </div>
+                    </div>
 
-             <div className="grid grid-cols-2 gap-6 mb-12">
-                <div className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm">
-                   <div className="text-black/30 mb-2"><FileText size={20} /></div>
-                   <div className="text-2xl font-black">{project.slide_count}</div>
-                   <div className="text-[10px] font-bold uppercase tracking-widest opacity-40">Slides</div>
-                </div>
-                <div className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm">
-                   <div className="text-black/30 mb-2"><Clock size={20} /></div>
-                   <div className="text-2xl font-black">{project.slide_count ? Math.round(project.slide_count * 0.25 + 2) : 2}h</div>
-                   <div className="text-[10px] font-bold uppercase tracking-widest opacity-40">Est. Labor</div>
-                </div>
-                <div className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm">
-                   <div className="text-black/30 mb-2"><Calendar size={20} /></div>
-                   <div className="text-xl font-black whitespace-nowrap overflow-hidden text-ellipsis">
-                      {new Date(project.creation_date).toLocaleDateString()}
-                   </div>
-                   <div className="text-[10px] font-bold uppercase tracking-widest opacity-40">Captured</div>
-                </div>
-                <div className="bg-white p-6 rounded-3xl border border-black/5 shadow-sm">
-                   <div className="text-black/30 mb-2"><Info size={20} /></div>
-                   <div className="text-xl font-black uppercase tracking-tight">{project.subject || "General"}</div>
-                   <div className="text-[10px] font-bold uppercase tracking-widest opacity-40">Category</div>
-                </div>
-             </div>
+                    <div className="grid grid-cols-2 gap-4">
+                       <Link 
+                         href={`/projects/${id}/view`}
+                         className="flex items-center justify-center gap-2 bg-[#6750A4] text-white p-5 rounded-[24px] font-black uppercase tracking-widest text-[10px] shadow-lg shadow-[#6750A4]/20 hover:scale-105 transition-all outline-none"
+                       >
+                          <Eye size={16} /> Exhibition
+                       </Link>
+                       <button className="flex items-center justify-center gap-2 bg-white border border-black/5 p-5 rounded-[24px] font-black uppercase tracking-widest text-[10px] hover:bg-black/5 transition-all outline-none">
+                          <Download size={16} /> Assets
+                       </button>
+                    </div>
+                 </div>
 
-             <div className="flex flex-col sm:flex-row gap-4">
-                <Link 
-                  href={`/projects/${id}/view`}
-                  className="flex-1 flex items-center justify-center gap-3 bg-[#6750A4] text-white px-8 py-5 rounded-3xl font-black uppercase tracking-widest text-sm shadow-xl shadow-[#6750A4]/20 hover:scale-105 transition-all"
-                >
-                   <Maximize2 size={18} />
-                   View Exhibition
-                </Link>
-                <button className="flex-1 flex items-center justify-center gap-3 bg-white border border-black/5 text-black px-8 py-5 rounded-3xl font-black uppercase tracking-widest text-sm hover:bg-black/5 transition-all">
-                   <Download size={18} />
-                   Download Assets
-                </button>
-             </div>
-          </div>
+                 {/* Ad / Promo Column (Canva Style) */}
+                 <div className="bg-gradient-to-br from-[#1D1B20] to-purple-900 rounded-[40px] p-10 text-white relative overflow-hidden shadow-2xl">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16" />
+                    <h3 className="text-xl font-black mb-4 relative z-10 leading-snug">Need the original raw template?</h3>
+                    <p className="text-white/40 text-sm font-medium leading-relaxed mb-8 relative z-10">
+                       Request the master XML source through the Sincere Bhattarai private legacy network for unrestricted editing access.
+                    </p>
+                    <button className="w-full py-4 bg-white text-black rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-white/90 transition-all relative z-10">
+                       Access Legacy
+                    </button>
+                 </div>
+
+              </div>
+           </div>
+
         </div>
-
-        {/* 3. Deep Features Section */}
-        <section className="bg-white rounded-[60px] p-12 lg:p-20 shadow-xl shadow-black/5 border border-black/5">
-           <div className="max-w-4xl mx-auto text-center mb-16">
-              <h2 className="text-4xl font-black mb-6">Archive Composition</h2>
-              <div className="w-20 h-1.5 bg-[#6750A4] rounded-full mx-auto" />
-           </div>
-
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              <div className="space-y-4">
-                 <div className="w-14 h-14 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center">
-                    <Star size={28} />
-                 </div>
-                 <h4 className="text-xl font-black">Primacy Score</h4>
-                 <p className="text-sm text-black/50 leading-relaxed font-medium">
-                    This archive ranks in the top percentile of visual consistency, utilizing the legendary Sincere Bhattarai signature color palette.
-                 </p>
-              </div>
-              <div className="space-y-4">
-                 <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                    <ExternalLink size={28} />
-                 </div>
-                 <h4 className="text-xl font-black">Meta-Linking</h4>
-                 <p className="text-sm text-black/50 leading-relaxed font-medium">
-                    Fully cataloged and indexed within the VoidArchive global registry, including cross-referenced subject tags and labor-metrics.
-                 </p>
-              </div>
-              <div className="space-y-4">
-                 <div className="w-14 h-14 rounded-2xl bg-purple-100 text-[#6750A4] flex items-center justify-center">
-                    <Info size={28} />
-                 </div>
-                 <h4 className="text-xl font-black">Authenticity</h4>
-                 <p className="text-sm text-black/50 leading-relaxed font-medium">
-                    Generated via the Observer Python legacy pipeline. All slides carry the 2% Ghost Watermark as Proof of Archival.
-                 </p>
-              </div>
-           </div>
-        </section>
 
       </main>
     </div>
-  );
-}
-
-function Maximize2(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-      <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-      <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-      <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-    </svg>
   );
 }
