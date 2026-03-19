@@ -2,6 +2,11 @@ import os
 import hashlib
 import json
 
+# Paths
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+RAW_DIR = os.path.join(PROJECT_ROOT, "assets/Raw")
+
 def get_file_hash(file_path):
     hasher = hashlib.md5()
     with open(file_path, 'rb') as f:
@@ -27,8 +32,10 @@ def find_duplicates(raw_dir):
     return duplicates
 
 if __name__ == "__main__":
-    raw_dir = "assets/Raw"
-    dupes = find_duplicates(raw_dir)
+    if not os.path.exists(RAW_DIR):
+        print(f"[!] Raw directory not found: {RAW_DIR}")
+    else:
+        dupes = find_duplicates(RAW_DIR)
     if dupes:
         print(f"[!] Found {len(dupes)} duplicates:")
         for d, original in dupes:

@@ -30,124 +30,111 @@ export default function Home() {
   const subjects = Array.from(new Set(projects.map((p) => p.subject || "General")));
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--fg)] overflow-x-hidden transition-colors duration-500">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--fg)] transition-all duration-700">
       
-      {/* Dynamic Background Noise */}
-      <div className="fixed inset-0 opacity-[0.03] pointer-events-none z-0 mix-blend-overlay">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <filter id="noiseFilter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
-          </filter>
-          <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
-        </svg>
-      </div>
-
-      {/* Nav */}
-      <nav className="fixed top-0 inset-x-0 z-[100] p-6 sm:p-8 lg:p-12 pointer-events-none">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-between pointer-events-auto">
-          <Link href="/" className="flex items-center gap-4 group">
-            <div className="w-11 h-11 bg-[var(--primary)] text-white flex items-center justify-center rounded-[18px] shadow-2xl group-hover:rotate-[15deg] transition-all">
-                <span className="font-black text-lg">V</span>
-            </div>
-            <div className="hidden sm:block">
-               <h1 className="text-xl font-black tracking-tighter leading-none">VoidArchive</h1>
-               <p className="text-[10px] font-black tracking-[0.4em] uppercase opacity-40">Preservation Engine</p>
-            </div>
-          </Link>
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <Link href="/archive" className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-2xl glass font-black uppercase tracking-widest text-[10px] hover:bg-[var(--primary)] hover:text-white transition-all shadow-xl">
-               Vault Protocol
-            </Link>
+      {/* GLOSSY NAV */}
+      <nav className="fixed top-0 inset-x-0 z-[100] px-8 py-6 flex items-center justify-between glass border-b border-[var(--border)]">
+        <Link href="/" className="flex items-center gap-4 group">
+          <div className="w-10 h-10 bg-[var(--fg)] text-[var(--bg)] flex items-center justify-center rounded-xl shadow-2xl transition-all">
+              <span className="font-black text-lg">V</span>
           </div>
+          <div className="hidden sm:block">
+             <h1 className="text-xl font-black tracking-tight leading-none">VoidArchive</h1>
+             <p className="text-[10px] font-black tracking-[0.4em] uppercase opacity-40">The Legacy Museum</p>
+          </div>
+        </Link>
+        <div className="flex items-center gap-6">
+          <ThemeToggle />
+          <Link href="/archive" className="px-8 py-2.5 bg-[#EEE] dark:bg-[#222] border border-[var(--border)] rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-[var(--fg)] hover:text-[var(--bg)] transition-all flex items-center gap-2">
+             THE VAULT <ArrowRight size={14}/>
+          </Link>
         </div>
       </nav>
 
-      {/* Hero Exhibition */}
-      <section className="relative pt-64 pb-32 px-5 flex flex-col items-center text-center">
+      {/* MINIMALIST HERO */}
+      <section className="relative pt-64 pb-24 px-5 flex flex-col items-center">
         <motion.div 
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-5xl z-10"
+          className="w-full max-w-5xl z-10 text-center"
         >
-          <div className="inline-flex items-center gap-3 px-6 py-2 bg-[var(--primary-muted)] border border-[var(--border)] rounded-full mb-12 animate-float">
-            <ShieldCheck size={14} className="text-[var(--primary)]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--primary)]">Authenticated Digital Legacy</span>
+          <div className="inline-flex items-center gap-2 px-6 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-full mb-12 animate-float">
+            <span className="w-2 h-2 rounded-full bg-green-500" />
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40">System Core Online</span>
           </div>
 
-          <h1 className="text-7xl sm:text-[10rem] lg:text-[12rem] font-black leading-[0.8] tracking-tighter mb-12 overflow-hidden">
-            <span className="block mb-2">Sincere's</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] via-indigo-400 to-purple-400 animate-gradient-x">Labours</span>
+          <h1 className="text-8xl sm:text-[11rem] lg:text-[13rem] font-black leading-[0.8] tracking-tight mb-16 select-none opacity-100 dark:mix-blend-difference">
+            DIGITAL<br />
+            <span className="text-transparent bg-[var(--fg)] bg-clip-text">LEGACY</span>
           </h1>
 
-          <p className="max-w-xl mx-auto text-lg text-[var(--fg-muted)] font-medium mb-12 leading-relaxed opacity-60">
-            A high-fidelity digital monument preserving years of academic and creative output. 
-            Compressed for the future, archived for history.
+          <p className="max-w-2xl mx-auto text-xl text-[var(--fg-muted)] font-medium mb-16 leading-relaxed opacity-60">
+            A refined collection of academic labour, preserved in high-fidelity for the future. 
+            Minimalist architecture. Maximum fidelity.
           </p>
 
-          {/* New Search Experience */}
+          {/* GLOSSY SEARCH */}
           <form onSubmit={handleSearch} className="relative w-full max-w-2xl mx-auto mb-20 group">
-             <div className="absolute inset-0 bg-[var(--primary)] opacity-10 blur-3xl rounded-full scale-90 group-focus-within:scale-100 transition-transform"/>
-             <div className="relative flex items-center p-2 bg-[var(--surface-1)] border-2 border-[var(--border)] rounded-[32px] focus-within:border-[var(--primary)] transition-all shadow-2xl">
-                <Search size={22} className="ml-6 text-[var(--fg-subtle)]" />
+             <div className="absolute inset-0 bg-black/10 dark:bg-white/10 opacity-5 blur-3xl rounded-full scale-110"/>
+             <div className="relative flex items-center p-2 bg-[var(--bg)] border-2 border-[var(--border)] rounded-full focus-within:border-[var(--fg)] transition-all shadow-2xl overflow-hidden glass">
+                <Search size={24} className="ml-8 text-[var(--fg-subtle)]" />
                 <input 
                   type="text" 
                   value={searchVal}
                   onChange={e => setSearchVal(e.target.value)}
-                  placeholder="Query the Archive..." 
-                  className="flex-1 bg-transparent px-6 py-4 font-black text-xl placeholder:text-[var(--fg-subtle)] outline-none"
+                  placeholder="Query archival nodes..." 
+                  className="flex-1 bg-transparent px-8 py-6 font-black text-2xl placeholder:opacity-20 outline-none"
                 />
-                <button type="submit" className="p-4 bg-[var(--primary)] text-white rounded-[24px] hover:scale-105 active:scale-95 transition-all shadow-xl">
-                   <ArrowRight size={24} />
+                <button type="submit" className="p-6 bg-[var(--fg)] text-[var(--bg)] rounded-full hover:scale-105 active:scale-95 transition-all shadow-2xl">
+                   <ArrowRight size={28} />
                 </button>
              </div>
           </form>
 
-          {/* Quick Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {/* MINIMAL STATS */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto pt-12 border-t border-[var(--border)]">
              {[
-               { icon: <Archive size={20}/>, label: "Preserved Items", val: projects.length },
-               { icon: <BookOpen size={20}/>, label: "Slide Assets", val: totalSlides },
-               { icon: <Terminal size={20}/>, label: "Archive Nodes", val: subjects.length }
+               { icon: <Archive size={20}/>, label: "Documents", val: projects.length },
+               { icon: <BookOpen size={20}/>, label: "Archive Slides", val: totalSlides },
+               { icon: <ShieldCheck size={20}/>, label: "Node Integrity", val: "100%" }
              ].map((s, i) => (
-                <div key={i} className="surface-card p-10 rounded-[40px] text-center border-t border-white/5">
-                   <div className="flex justify-center mb-6 text-[var(--primary)] opacity-40">{s.icon}</div>
-                   <div className="text-5xl font-black mb-2 tracking-tighter">{s.val}</div>
-                   <div className="text-[10px] font-black uppercase tracking-[0.3em] opacity-30">{s.label}</div>
+                <div key={i} className="text-center group">
+                   <div className="text-6xl font-black mb-1 group-hover:scale-110 transition-transform">{s.val}</div>
+                   <div className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30">{s.label}</div>
                 </div>
              ))}
           </div>
         </motion.div>
       </section>
 
-      {/* Museum Ribbon */}
-      <section className="py-24 bg-[var(--surface-2)] border-y border-[var(--border)] overflow-hidden">
+      {/* GLOSSY EXHIBITION RIBBON */}
+      <section className="py-24 bg-[var(--surface)] border-y border-[var(--border)] overflow-hidden">
         <div className="max-w-[1600px] mx-auto px-12 mb-12 flex items-center justify-between">
            <div className="space-y-1">
-             <h2 className="text-2xl font-black tracking-tighter">Exhibition Highlights</h2>
-             <p className="text-sm font-medium text-[var(--fg-muted)]">Curation of the most impactful presentations.</p>
+             <h2 className="text-3xl font-black tracking-tight">Active Exhibition</h2>
+             <p className="text-sm font-medium opacity-40">Highlighting the most impactful Labours.</p>
            </div>
-           <Link href="/archive" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[var(--primary)] hover:underline">
-              Browse Vault <ChevronRight size={16} />
+           <Link href="/archive" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[var(--fg)] hover:underline">
+              BROWSE VAULT <ChevronRight size={16} />
            </Link>
         </div>
 
         {projects.length > 0 && (
           <motion.div 
-            animate={{ x: [0, -2000] }}
-            transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-            className="flex gap-10 px-12 w-fit"
+            animate={{ x: [0, -1500] }}
+            transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+            className="flex gap-12 px-12 w-fit h-72"
           >
             {projects.concat(projects).map((p, i) => (
                <Link 
                  key={i} 
                  href={`/projects/${p.id}`}
-                 className="flex-shrink-0 w-[450px] aspect-video rounded-[40px] overflow-hidden border-4 border-[var(--border)] shadow-2xl hover:scale-105 active:scale-95 transition-all duration-500 group relative"
+                 className="flex-shrink-0 w-96 rounded-2xl overflow-hidden glass border-4 border-white/10 dark:border-white/5 shadow-2xl hover:scale-[1.03] transition-all duration-700 overflow-hidden relative group"
                >
-                  <img src={getPublicUrl(p.id, p.thumbnail || "slide_01.webp")} className="w-full h-full object-cover group-hover:rotate-3 group-hover:scale-110 transition-all duration-700" alt="Preview" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-10 flex flex-col justify-end gap-3 translate-y-6 group-hover:translate-y-0 transition-all">
-                     <span className="text-[10px] font-black tracking-[0.3em] text-[var(--primary)] uppercase">{p.subject}</span>
+                  <img src={getPublicUrl(p.id, p.thumbnail || "slide_01.webp")} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" alt="Preview" />
+                  <div className="absolute inset-0 bg-black/40 p-10 flex flex-col justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
+                     <span className="text-[10px] font-black tracking-[0.4em] text-white uppercase">{p.subject}</span>
                      <h3 className="text-2xl font-black text-white leading-tight">{p.title}</h3>
                   </div>
                </Link>
@@ -156,20 +143,9 @@ export default function Home() {
         )}
       </section>
 
-      {/* Life's Work Section */}
-      <section className="py-44 px-5 max-w-5xl mx-auto flex flex-col items-center text-center">
-         <div className="w-20 h-20 bg-[var(--primary-muted)] rounded-3xl flex items-center justify-center text-[var(--primary)] mb-12">
-            <Layers size={40} />
-         </div>
-         <h2 className="text-4xl sm:text-6xl font-black tracking-tighter mb-8 leading-none">Complete Preservation</h2>
-         <p className="text-lg text-[var(--fg-muted)] font-medium leading-relaxed mb-12 opacity-70">
-           This archive is a living record of academic evolution. Every document has been processed to 
-           be high-fidelity but small-footprint, ensuring Sincere's work remains accessible across generations.
-         </p>
-         <Link href="/archive" className="px-12 py-5 bg-[var(--fg)] text-[var(--bg)] rounded-[24px] font-black uppercase tracking-widest text-xs shadow-2xl hover:scale-105 transition-all">
-            Open The Vault System
-         </Link>
-      </section>
+      <div className="h-64 flex items-center justify-center opacity-10 text-[10px] font-black uppercase tracking-[1em]">
+          VoidArchive Preservation System v2.5
+      </div>
 
     </div>
   );

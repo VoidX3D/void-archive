@@ -66,11 +66,11 @@ export function StarRating({
             >
               <Star
                 size={size}
-                fill={filled ? "#FACC15" : "none"}
+                fill={filled ? "var(--fg)" : "none"}
                 className={`transition-all duration-150 ${
                   filled
-                    ? "text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.6)]"
-                    : "text-[var(--fg-subtle)]"
+                    ? "text-[var(--fg)] drop-shadow-[0_0_8px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
+                    : "text-[var(--border)]"
                 } ${
                   !readonly && !submitted && hovered >= s
                     ? "scale-110"
@@ -89,7 +89,7 @@ export function StarRating({
             initial={{ opacity: 0, x: -4 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 4 }}
-            className="text-[11px] font-black uppercase tracking-widest text-yellow-500"
+            className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--fg)]"
           >
             {LABELS[active]}
           </motion.span>
@@ -97,7 +97,7 @@ export function StarRating({
       </AnimatePresence>
 
       {showCount && count > 0 && (
-        <span className="text-[11px] font-bold text-[var(--fg-muted)]">
+        <span className="text-[10px] font-black italic opacity-20 tracking-tighter">
           ({count})
         </span>
       )}
@@ -117,12 +117,12 @@ export function StarDisplay({
 }) {
   if (!value) return null;
   return (
-    <div className="flex items-center gap-1.5">
-      <Star size={size} fill="#FACC15" className="text-yellow-400" />
-      <span className="text-[11px] font-black text-[var(--fg-muted)]">
-        {value.toFixed(1)}
+    <div className="flex items-center gap-3">
+      <Star size={size} fill="var(--fg)" className="text-[var(--fg)] opacity-100 drop-shadow-[0_0_4px_rgba(0,0,0,0.1)]" />
+      <span className="text-[10px] font-black text-[var(--fg-muted)] uppercase tracking-widest italic leading-none">
+        {value.toFixed(1)} protocol
         {count !== undefined && count > 0 && (
-          <span className="font-medium"> ({count})</span>
+          <span className="font-medium opacity-20"> ({count})</span>
         )}
       </span>
     </div>
