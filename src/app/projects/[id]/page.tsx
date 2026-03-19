@@ -296,7 +296,7 @@ function ZoomWrap({ currentSlide, project }: { currentSlide: number, project: an
             src={getPublicUrl(project.id, project.slides[currentSlide])} 
             className="w-full h-full object-contain pointer-events-none" 
             alt="Preservation Output"
-            style={{ imageRendering: 'high-quality' }}
+            style={{ imageRendering: 'auto' }}
           />
        </AnimatePresence>
     </div>

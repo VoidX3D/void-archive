@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ArrowLeft, Grid, List, Clock, FileText, X, SlidersHorizontal, BookOpen, ChevronRight, Sparkles, Monitor, History, ShieldCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { StarDisplay } from "@/components/StarRating";
 
 type SortKey = "newest" | "oldest" | "slides" | "title";
 
-export default function ArchivePage() {
+function ArchiveContents() {
   const searchParams = useSearchParams();
   const initialQ = searchParams.get("q") || "";
   const [projects, setProjects] = useState<any[]>([]);
@@ -109,7 +109,7 @@ export default function ArchivePage() {
                      <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-30 italic">PROTOCOL AREA SELECTOR</p>
                      <div className="flex flex-wrap gap-2">
                         {["All", ...subjects].map(s => (
-                           <button key={s} onClick={() => setSubject(s === "All" ? "" : s)} className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${((s === "All" && !subject) || s === subject) ? 'bg-[var(--fg)] text-[var(--bg)] border-[var(--fg)]' : 'bg-[var(--surface)] border-[var(--border)] hover:border-[var(--fg)] opactiy-60'}`}>{s}</button>
+                           <button key={s} onClick={() => setSubject(s === "All" ? "" : s)} className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${((s === "All" && !subject) || s === subject) ? 'bg-[var(--fg)] text-[var(--bg)] border-[var(--fg)]' : 'bg-[var(--surface)] border-[var(--border)] hover:border-[var(--fg)] opacity-60'}`}>{s}</button>
                         ))}
                      </div>
                   </div>
@@ -171,5 +171,13 @@ export default function ArchivePage() {
 
       </main>
     </div>
+  );
+}
+
+export default function ArchivePage() {
+  return (
+    <Suspense fallback={<div className="h-screen flex items-center justify-center bg-white dark:bg-black"><div className="w-10 h-10 border-4 border-black/10 border-t-black rounded-full animate-spin" /></div>}>
+       <ArchiveContents />
+    </Suspense>
   );
 }

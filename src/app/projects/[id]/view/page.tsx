@@ -147,7 +147,7 @@ export default function ProjectViewer() {
               src={activeSlidePath} 
               alt="Labours Slide"
               className="w-full h-full object-contain shadow-[0_40px_120px_rgba(0,0,0,0.9)] border border-white/5 select-none pointer-events-none"
-              style={{ imageRendering: 'high-quality' }}
+              style={{ imageRendering: 'auto' }}
             />
             
             {/* Glossy Overlay Watermark */}
