@@ -49,3 +49,4 @@ next-env.d.ts
 
 # Local ratings store
 /.ratings.json
+public/assets/Raw/Computer_PresentationPDF.pdf
