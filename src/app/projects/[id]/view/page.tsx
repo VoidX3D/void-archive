@@ -102,13 +102,13 @@ export default function ProjectViewer() {
             className="absolute top-0 inset-x-0 z-50 p-10 flex items-center justify-between"
           >
             <div className="flex items-center gap-10">
-              <button onClick={() => router.back()} className="p-4 bg-white/5 border border-white/10 rounded-full hover:bg-white text-black transition-all shadow-2xl glass">
-                <ArrowLeft size={24} />
+              <button onClick={() => router.back()} className="p-5 bg-white/5 border border-white/10 rounded-full hover:bg-white text-black transition-all shadow-3xl glass group">
+                <ArrowLeft size={24} className="group-hover:scale-110 transition-all" />
               </button>
               <div className="space-y-1">
-                <h1 className="text-2xl font-black text-white tracking-tighter uppercase italic">{project.title}</h1>
-                <div className="flex items-center gap-4 text-[10px] font-black text-white/40 tracking-[0.4em] uppercase">
-                   {project.subject} <ShieldCheck size={10}/> Authenticated Labours Node {currentSlide + 1}
+                <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{project.title}</h1>
+                <div className="flex items-center gap-4 text-[10px] font-black text-white/40 tracking-[0.5em] uppercase">
+                   {project.subject} <ShieldCheck size={10} className="text-green-500"/> AUTHENTICATED VAULT NODE {currentSlide + 1}
                 </div>
               </div>
             </div>
