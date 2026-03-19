@@ -19,10 +19,11 @@ PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 OUTPUT_BASE = os.path.join(PROJECT_ROOT, "assets/Processed/")
 RAW_DIR = os.path.join(PROJECT_ROOT, "assets/Raw")
 
-# HIGH FIDELITY SETTINGS
+# GITHUB CALIBRATION (v2.6)
+# High enough for museum feel, low enough for 100MB limit
 SINCERE_NAME = "Sincere Bhattarai"
-OUTPUT_DPI = 150  # Increased for clarity
-WEBP_QUALITY = 85 # Shifting from 70 to 85 for sharpness
+OUTPUT_DPI = 120  
+WEBP_QUALITY = 75 
 
 def get_metadata(file_path):
     ext = os.path.splitext(file_path)[1].lower()
@@ -64,7 +65,6 @@ def dominant_color(img_path):
         return "#000000"
 
 def process_slide(img_path, out_path):
-    # Sharp WebP conversion
     cmd = [
         "convert", img_path,
         "-quality", str(WEBP_QUALITY),
@@ -81,24 +81,29 @@ def process_project(file_path):
     out_dir = os.path.join(OUTPUT_BASE, file_id)
     os.makedirs(out_dir, exist_ok=True)
 
-    print(f"[*] Processing (High-Fi): {file_id}")
+    print(f"[*] Processing (GitHub-Fi): {file_id}")
     
-    pdf_path = os.path.join(out_dir, "archive.pdf")
+    # We use a temporary PDF for conversion
+    temp_pdf = os.path.join(out_dir, "temp.pdf")
     if ext == ".pdf":
-        shutil.copy2(file_path, pdf_path)
+        shutil.copy2(file_path, temp_pdf)
     else:
         subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", out_dir, file_path], 
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         actual_pdf = os.path.join(out_dir, os.path.basename(file_path).replace(ext, ".pdf"))
-        if os.path.exists(actual_pdf) and actual_pdf != pdf_path:
-            shutil.move(actual_pdf, pdf_path)
+        if os.path.exists(actual_pdf):
+            shutil.move(actual_pdf, temp_pdf)
 
-    # High Resolution Extraction
+    if not os.path.exists(temp_pdf):
+        print(f"[!] Error: Could not generate PDF for {file_id}")
+        return
+
+    # Extract high-quality PNGs
     img_prefix = os.path.join(out_dir, "slide")
-    subprocess.run(["pdftoppm", "-png", "-rx", str(OUTPUT_DPI), "-ry", str(OUTPUT_DPI), pdf_path, img_prefix], 
+    subprocess.run(["pdftoppm", "-png", "-rx", str(OUTPUT_DPI), "-ry", str(OUTPUT_DPI), temp_pdf, img_prefix], 
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
-    slides = sorted(glob.glob(os.path.join(out_dir, "*.png")))
+    slides = sorted(glob.glob(os.path.join(out_dir, "slide-*.png")))
     slide_names = []
     for i, png in enumerate(slides, 1):
         name = f"slide_{i:02d}.webp"
@@ -106,7 +111,11 @@ def process_project(file_path):
         process_slide(png, os.path.join(out_dir, name))
         os.remove(png)
     
-    if len(slide_names) > 0: os.remove(pdf_path)
+    # CRITICAL: Remove temp PDF to keep repo size down
+    if os.path.exists(temp_pdf): os.remove(temp_pdf)
+
+    # Cleanup any stray PDFs (soffice can leave them)
+    for p in glob.glob(os.path.join(out_dir, "*.pdf")): os.remove(p)
 
     meta = get_metadata(file_path)
     meta["id"] = file_id
@@ -120,11 +129,11 @@ def process_project(file_path):
     with open(os.path.join(out_dir, "metadata.json"), "w") as f:
         json.dump(meta, f, indent=4)
         
-    print(f"[+] Sharp Assets Created: {file_id}")
+    print(f"[+] Assets Created (Small & Sharp): {file_id}")
 
 if __name__ == "__main__":
     if not os.path.exists(RAW_DIR):
-        print(f"[!] Raw directory not found at: {RAW_DIR}")
+        print(f"[!] Raw directory not found: {RAW_DIR}")
     else:
         for f in os.listdir(RAW_DIR):
             process_project(os.path.join(RAW_DIR, f))

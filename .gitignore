@@ -40,11 +40,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# VoidArchive
-Assets/
-assets/Processed/
-scripts/venv/
-scripts/__pycache__/
+# VoidArchive - GITHUB ARCHIVE CALIBRATION (v2.6)
+# We keep PROCESSED assets in Git so they can be served.
+# We ignore RAW assets because they are too bulky.
+/assets/Raw/
+/scripts/venv/
+/scripts/__pycache__/
 
 # Local ratings store
-.ratings.json
+/.ratings.json

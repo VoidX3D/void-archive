@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, BookOpen, Layers, Zap, Search, ArrowRight, ShieldCheck, Download, Archive, Terminal } from "lucide-react";
+import { ChevronRight, BookOpen, Search, ArrowRight, ShieldCheck, Archive } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getPublicUrl } from "@/lib/supabase";
