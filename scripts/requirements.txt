@@ -1,0 +1,9 @@
+watchdog
+supabase
+python-pptx
+python-docx
+pypdf
+Pillow
+requests
+python-dotenv
+
