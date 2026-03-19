@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
+import Script from "next/script";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -67,8 +68,9 @@ export default function RootLayout({
       className={`${outfit.variable} ${jetbrainsMono.variable} h-full`}
     >
       <head>
-        <script
+        <Script
           id="theme-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               try {

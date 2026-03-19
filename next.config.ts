@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // @ts-ignore - Turbopack root config may vary in pre-release
+  turbopack: {
+    root: ".",
+  },
   images: {
     unoptimized: true,
   },
@@ -8,7 +12,7 @@ const nextConfig: NextConfig = {
   compress: true,
 
   experimental: {
-    optimizePackageImports: ["lucide-react", "framer-motion"],
+    // optimizePackageImports: ["lucide-react", "framer-motion"],
   },
 
   async headers() {
