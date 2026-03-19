@@ -30,7 +30,7 @@ if __name__ == "__main__":
     monitored_paths = [
         os.path.expanduser("~/Presentations/"),
         os.path.expanduser("~/Legacy/"),
-        os.path.join(os.getcwd(), "Assets/Raw/")
+        os.path.join(os.getcwd(), "assets/Raw/")
     ]
     
     # Ensure paths exist

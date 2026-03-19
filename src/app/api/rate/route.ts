@@ -3,11 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.SUPABASE_URL || "";
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+const isValidUrl = supabaseUrl.startsWith("http");
 
 export async function POST(req: Request) {
   const { projectId, rating, identityHash, telemetry } = await req.json();
 
-  if (!supabaseUrl || !supabaseKey) {
+  if (!supabaseUrl || !supabaseKey || !isValidUrl) {
     // Mock success if no supabase configured
     console.log("[Rating Mock]", { projectId, rating, identityHash, telemetry });
     return NextResponse.json({ success: true, message: "Rating recorded (Mock)" });

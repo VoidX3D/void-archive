@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 from sync import sync_to_cloud
 
 # Config
-OUTPUT_BASE = os.path.join(os.getcwd(), "Assets/Processed/")
+OUTPUT_BASE = os.path.join(os.getcwd(), "assets/Processed/")
 SINCERE_NAME = "Sincere B. Archive"
 AUTHOR_FULL = "Sincere Bhattarai"
 
@@ -60,15 +60,29 @@ def deep_etch_metadata(target_path):
     subprocess.run(cmd)
 
 def create_teaser(images, output_path):
-    # Create an animated teaser using ImageMagick
+    # Create an animated teaser using ffmpeg
     if not images: return
     # Use only first 10 slides for teaser to keep it small
     teaser_inputs = images[:10]
+    
+    # ffmpeg expects images via pipe or patterned naming.
+    # We can pipe them.
     cmd = [
-        "convert", "-delay", "100", "-loop", "0"
-    ] + teaser_inputs + [output_path.replace(".webm", ".webp")]
-    subprocess.run(cmd)
-    print(f"[*] Teaser generated: {output_path.replace('.webm', '.webp')}")
+        "ffmpeg", "-y", "-framerate", "1",
+        "-i", "pipe:0",
+        "-c:v", "libvpx-vp9",
+        "-pix_fmt", "yuva420p",
+        "-b:v", "1M",
+        output_path
+    ]
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if p.stdin:
+        for img_path in teaser_inputs:
+            with open(img_path, "rb") as f:
+                p.stdin.write(f.read()) # pyre-ignore
+        p.stdin.close()
+    p.wait()
+    print(f"[*] Teaser generated: {output_path}")
 
 def process_file(file_path):
     ext = os.path.splitext(file_path)[1].lower()
@@ -106,7 +120,7 @@ def process_file(file_path):
     meta = get_metadata(file_path)
     meta["id"] = file_id
     meta["slide_count"] = len(images)
-    teaser_filename = "teaser.webp"
+    teaser_filename = "teaser.webm"
     meta["teaser"] = teaser_filename if os.path.exists(os.path.join(output_dir, teaser_filename)) else None
     
     # Estimate time spent: 15m per slide + 2h base

@@ -15,6 +15,7 @@ export default function ProjectViewer() {
   const [project, setProject] = useState<any>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [rating, setRating] = useState(0);
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,7 +69,8 @@ export default function ProjectViewer() {
 
   if (!project) return <div className="min-h-screen bg-black flex items-center justify-center font-black text-white/20 text-8xl tracking-tight">VOID ARCHIVE</div>;
 
-  const slides = Array.from({ length: project.slide_count }).map((_, i) => getPublicUrl(id as string, `slide_${i}.webp`));
+  const slides = (project.slides || Array.from({ length: project.slide_count || 0 }).map((_, i) => `slide_${i}.webp`))
+    .map((name: string) => getPublicUrl(id as string, name));
 
   return (
     <div className="min-h-screen bg-[#090909] flex flex-col text-white select-none">
@@ -105,7 +107,10 @@ export default function ProjectViewer() {
                 </div>
              </div>
              
-             <button className="flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black hover:scale-105 transition-all font-black text-sm shadow-2xl">
+             <button 
+               onClick={() => setIsDownloadOpen(true)}
+               className="flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black hover:scale-105 transition-all font-black text-sm shadow-2xl"
+             >
                 <Share2 size={18} />
                 <span>Sync Legacy</span>
              </button>
@@ -205,6 +210,57 @@ export default function ProjectViewer() {
 
        {/* Caution Banner Overlay (Hidden by default, triggered on save/print) */}
        <div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 animate-gradient-x z-[60]" />
+
+       {/* Download Bottom Sheet Modal */}
+       <AnimatePresence>
+          {isDownloadOpen && (
+             <>
+                <motion.div 
+                   initial={{ opacity: 0 }}
+                   animate={{ opacity: 1 }}
+                   exit={{ opacity: 0 }}
+                   onClick={() => setIsDownloadOpen(false)}
+                   className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+                />
+                <motion.div
+                   initial={{ y: "100%" }}
+                   animate={{ y: 0 }}
+                   exit={{ y: "100%" }}
+                   transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                   className="fixed bottom-0 left-0 right-0 bg-[#1D1B20] text-white rounded-t-[40px] z-[110] p-8 pb-12 shadow-[0_-20px_60px_-15px_rgba(0,0,0,0.5)] border-t border-white/10"
+                >
+                   <div className="max-w-3xl mx-auto">
+                      <div className="w-16 h-1.5 bg-white/20 rounded-full mx-auto mb-8" />
+                      
+                      <div className="flex items-center gap-4 mb-2">
+                         <AlertTriangle className="text-yellow-500" size={24} />
+                         <span className="text-yellow-500 font-bold uppercase tracking-widest text-xs">Caution: Static Archival</span>
+                      </div>
+                      <p className="text-white/60 text-sm mb-8">
+                         These slides are flat images for maximum compatibility and precision. If you need editable content, use the <b>Template</b> option below. Please ensure you have the required fonts installed: <i>[Sincere Archives Official Font Stack]</i>.
+                      </p>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         {/* Option 1 */}
+                         <button className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-3xl p-6 text-left transition-all group">
+                            <h4 className="font-black text-xl mb-2 group-hover:text-purple-400 transition-colors">The Template</h4>
+                            <p className="text-white/40 text-xs mb-4">A stripped version of the pristine core format. Master slides preserved with archive branding, ready for new content injection.</p>
+                            <div className="text-[10px] uppercase tracking-widest bg-purple-500/20 text-purple-300 py-1 px-3 rounded-full inline-block">.PPTX / .DOCX</div>
+                         </button>
+
+                         {/* Option 2 */}
+                         <button className="bg-purple-600 hover:bg-purple-500 border border-purple-500/50 rounded-3xl p-6 text-left transition-all shadow-lg shadow-purple-900/40 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16 group-hover:scale-150 transition-transform" />
+                            <h4 className="font-black text-xl mb-2 relative z-10">The Image Pack</h4>
+                            <p className="text-white/80 text-xs mb-4 relative z-10">A hyper-compressed .zip containing all individual slide images for flawless offline playback. Zero font issues.</p>
+                            <div className="text-[10px] uppercase tracking-widest bg-white/20 text-white py-1 px-3 rounded-full inline-block relative z-10">.ZIP Archive</div>
+                         </button>
+                      </div>
+                   </div>
+                </motion.div>
+             </>
+          )}
+       </AnimatePresence>
     </div>
   );
 }
