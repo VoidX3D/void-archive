@@ -5,7 +5,7 @@ import {
   ArrowLeft, Eye, Clock, Calendar, FileText, CheckCircle2, 
   Video, Play, ChevronLeft, ChevronRight, Download, 
   Share2, ShieldCheck, User, Globe, AlertTriangle, Monitor,
-  Package, ExternalLink, Info, Layers, ArrowRight
+  Package, ExternalLink, Info, ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -255,9 +255,15 @@ export default function ProjectDescription() {
                     <Link href={`/projects/${id}/view`} className="flex items-center justify-center gap-6 w-full py-6 bg-[var(--fg)] text-[var(--bg)] rounded-full font-black uppercase tracking-[0.3em] text-[12px] shadow-3xl hover:scale-[1.03] transition-all">
                        <Monitor size={24}/> VIEW EXHIBITION
                     </Link>
-                    <button className="flex items-center justify-center gap-6 w-full py-6 bg-[var(--bg)] text-[var(--bg)] rounded-full font-black uppercase tracking-[0.3em] text-[12px] hover:bg-black hover:text-white transition-all bg-transparent border-2 border-[var(--fg)]">
-                       <Download size={24}/> ACCESS BUNDLE
-                    </button>
+                     {project.raw_url ? (
+                        <a href={project.raw_url} download className="flex items-center justify-center gap-6 w-full py-6 bg-[var(--bg)] text-[var(--fg)] rounded-full font-black uppercase tracking-[0.3em] text-[12px] hover:bg-black hover:text-white transition-all bg-transparent border-2 border-[var(--fg)] shadow-xl">
+                          <Download size={24}/> ACCESS BUNDLE
+                        </a>
+                     ) : (
+                        <button disabled className="flex items-center justify-center gap-6 w-full py-6 bg-[var(--surface)] text-[var(--fg-muted)] rounded-full font-black uppercase tracking-[0.3em] text-[12px] border-2 border-[var(--border)] opacity-50 cursor-not-allowed">
+                          <Download size={24}/> BUNDLE OFFLINE
+                        </button>
+                     )}
                     <button onClick={() => {}} className="flex items-center justify-center gap-4 w-full py-4 text-[10px] font-black uppercase tracking-widest opacity-30 hover:opacity-100 transition-opacity italic">
                        DISTRIBUTE_LINK <ArrowRight size={14}/>
                     </button>

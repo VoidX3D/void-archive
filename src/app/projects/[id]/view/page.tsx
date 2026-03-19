@@ -5,7 +5,7 @@ import {
   ArrowLeft, Share2, Maximize2, Minimize2,
   ChevronLeft, ChevronRight, Info, AlertTriangle,
   Keyboard, X, Download, Monitor, Play, Pause, ZoomIn, ZoomOut,
-  Maximize, Minimize, ShieldCheck, Layers
+  Maximize, Minimize, ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";

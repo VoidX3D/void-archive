@@ -68,19 +68,16 @@ export default function RootLayout({
     >
       <head>
         <script
+          id="theme-init"
           dangerouslySetInnerHTML={{
             __html: `
-              (function() {
-                try {
-                  var t = localStorage.getItem('va-theme');
-                  var d = document.documentElement;
-                  if (t === 'dark') { d.classList.add('dark'); }
-                  else if (t === 'light') { d.classList.remove('dark'); }
-                  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    d.classList.add('dark');
-                  }
-                } catch(e) {}
-              })();
+              try {
+                var t = localStorage.getItem('va-theme');
+                var d = document.documentElement;
+                if (t === 'dark') d.classList.add('dark');
+                else if (t === 'light') d.classList.remove('dark');
+                else if (window.matchMedia('(prefers-color-scheme: dark)').matches) d.classList.add('dark');
+              } catch(e) {}
             `,
           }}
         />

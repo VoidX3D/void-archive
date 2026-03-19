@@ -27,6 +27,9 @@ export async function GET() {
     const projects: any[] = [];
     const folders = fs.readdirSync(processedDir).filter(f => fs.statSync(path.join(processedDir, f)).isDirectory());
 
+    const rawDir = path.join(process.cwd(), "assets/Raw");
+    const rawFiles = fs.existsSync(rawDir) ? fs.readdirSync(rawDir) : [];
+
     for (const folder of folders) {
       const folderPath = path.join(processedDir, folder);
       const metaPath = path.join(folderPath, "metadata.json");
@@ -38,6 +41,10 @@ export async function GET() {
         } catch (e) { console.error(`Failed to parse meta for ${folder}`, e); }
       }
 
+      // Find raw counterpart
+      const rawFile = rawFiles.find(rf => rf.startsWith(folder) || rf === meta.id);
+      const rawUrl = rawFile ? `/assets/Raw/${rawFile}` : null;
+
       // Check for slides dynamically if not in meta or to verify
       const allFiles = fs.readdirSync(folderPath);
       const slideFiles = allFiles.filter(f => SLIDE_REGEX.test(f)).sort(naturalSort);
@@ -48,7 +55,8 @@ export async function GET() {
         slides: slideFiles,
         slide_count: slideFiles.length || meta.slide_count || 0,
         thumbnail: meta.thumbnail || slideFiles[0] || null,
-        has_slides: slideFiles.length > 0
+        has_slides: slideFiles.length > 0,
+        raw_url: rawUrl
       });
     }
 

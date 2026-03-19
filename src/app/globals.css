@@ -31,17 +31,22 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  cursor: crosshair; /* Minimalist aesthetic */
+  cursor: crosshair;
+}
+
+a, button, [role="button"], input[type="submit"] {
+  cursor: pointer !important;
 }
 
 html, body {
   background: var(--bg);
   color: var(--fg);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Outfit', var(--font-sans);
   overflow-x: hidden;
   height: 100%;
   width: 100%;
   -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -57,11 +62,12 @@ body {
 /* ===== GLOSSY UTILITIES ===== */
 .glass {
   background: var(--glass);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid var(--border);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 }
 
 .glass::before {

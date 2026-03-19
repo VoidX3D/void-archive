@@ -144,7 +144,7 @@ export default function Home() {
       </section>
 
       <div className="h-64 flex items-center justify-center opacity-10 text-[10px] font-black uppercase tracking-[1em]">
-          VoidArchive Preservation System v2.5
+          VoidArchive Preservation System v2.6
       </div>
 
     </div>
