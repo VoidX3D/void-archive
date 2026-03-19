@@ -71,14 +71,8 @@ export default function ProjectViewer() {
   const slides = Array.from({ length: project.slide_count }).map((_, i) => getPublicUrl(id as string, `slide_${i}.webp`));
 
   return (
-    <div className="min-h-screen bg-[#090909] flex flex-col text-white selection:none">
+    <div className="min-h-screen bg-[#090909] flex flex-col text-white select-none">
        {/* Anti-Copy Styles */}
-       <style jsx global>{`
-         body {
-           user-select: none;
-           -webkit-user-select: none;
-         }
-       `}</style>
 
        {/* Floating Header */}
        <header className="fixed top-0 left-0 right-0 z-50 px-8 py-6 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent backdrop-blur-sm">

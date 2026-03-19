@@ -48,13 +48,7 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FDF7FF] text-[#1D1B20] selection:none">
-      <style jsx global>{`
-        .selection-none {
-          user-select: none;
-          -webkit-user-select: none;
-        }
-      `}</style>
+    <div className="min-h-screen bg-[#FDF7FF] text-[#1D1B20] select-none">
 
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-12 py-6 bg-white/10 backdrop-blur-3xl border-b border-white/10">
@@ -148,7 +142,7 @@ export default function Home() {
       </section>
 
       {/* Gallery Section */}
-      <main className="max-w-[1700px] mx-auto p-12 lg:p-24 bg-white rounded-[100px] shadow-[0_-50px_100px_-20px_rgba(0,0,0,0.05)] -mt-20 relative z-20 min-h-screen selection-none">
+      <main className="max-w-[1700px] mx-auto p-12 lg:p-24 bg-white rounded-[100px] shadow-[0_-50px_100px_-20px_rgba(0,0,0,0.05)] -mt-20 relative z-20 min-h-screen select-none">
 
         {/* Bento Grid */}
         {loading && (
