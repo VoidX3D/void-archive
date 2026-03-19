@@ -1,10 +1,28 @@
 {
-    "title": "Optional_Maths_360+theta.pptx",
-    "subject": "Unknown",
-    "word_count": 0,
-    "creation_date": "2026-03-19T07:25:55.753112",
-    "dominant_color": "#5c5b58",
+    "title": "PowerPoint Presentation",
+    "subject": "General",
+    "author": "Sincere Bhattarai",
+    "creation_date": "2026-03-18T22:11:36",
+    "filetype": "PPTX",
+    "keywords": [],
+    "description": "",
     "id": "Optional_Maths_360+theta",
+    "slides": [
+        "slide_01.webp",
+        "slide_02.webp",
+        "slide_03.webp",
+        "slide_04.webp",
+        "slide_05.webp",
+        "slide_06.webp",
+        "slide_07.webp",
+        "slide_08.webp",
+        "slide_09.webp",
+        "slide_10.webp",
+        "slide_11.webp",
+        "slide_12.webp"
+    ],
     "slide_count": 12,
-    "teaser": null
+    "thumbnail": "slide_01.webp",
+    "time_spent": "3h 0m",
+    "dominant_color": "#5c5a57"
 }

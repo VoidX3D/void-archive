@@ -1,10 +1,27 @@
 {
-    "title": "ScratchComputer.pptx",
-    "subject": "Unknown",
-    "word_count": 0,
-    "creation_date": "2026-03-19T07:25:55.753112",
-    "dominant_color": "#2b3344",
+    "title": "Scratchcomputer",
+    "subject": "Computer Science",
+    "author": "Sincere Bhattarai",
+    "creation_date": "2026-03-18T22:10:02",
+    "filetype": "PPTX",
+    "keywords": [],
+    "description": "",
     "id": "ScratchComputer",
+    "slides": [
+        "slide_01.webp",
+        "slide_02.webp",
+        "slide_03.webp",
+        "slide_04.webp",
+        "slide_05.webp",
+        "slide_06.webp",
+        "slide_07.webp",
+        "slide_08.webp",
+        "slide_09.webp",
+        "slide_10.webp",
+        "slide_11.webp"
+    ],
     "slide_count": 11,
-    "teaser": null
+    "thumbnail": "slide_01.webp",
+    "time_spent": "2h 50m",
+    "dominant_color": "#2a3343"
 }

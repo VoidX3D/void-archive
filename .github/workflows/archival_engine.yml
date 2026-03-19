@@ -1,0 +1,61 @@
+name: VoidArchive Archival Engine
+
+on:
+  push:
+    paths:
+      - 'assets/Raw/**'
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  archival-process:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('scripts/requirements.txt') }}
+
+      - name: Fix ImageMagick PDF Policy
+        run: |
+          sudo sed -i 's/rights="none" pattern="PDF"/rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml || true
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libreoffice imagemagick poppler-utils ffmpeg
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+
+      - name: Run Archival Engine (Optimized v2.4)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          python scripts/processor.py
+
+      - name: Commit and Push Processed Assets
+        run: |
+          git config --global user.name "VoidArchive Preservation Engine"
+          git config --global user.email "engine@voidarchive.local"
+          git add assets/Processed/
+          git commit -m "archive: automated preservation of raw assets [v2.4 engine]" || echo "No changes to commit"
+          git push origin main

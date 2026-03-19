@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-// Patterns that slide files match (slide-01.webp, slide_0.webp, slide-1.webp, slide1.webp, etc.)
+// Cache projects in memory for 1 minute to save IO
+let cache: { data: any[], timestamp: number } | null = null;
+const CACHE_TTL = 60000;
+
 const SLIDE_REGEX = /^slide[-_]?(\d+)\.(webp|png|jpg|jpeg)$/i;
 
 function naturalSort(a: string, b: string) {
@@ -11,81 +14,50 @@ function naturalSort(a: string, b: string) {
   return numA - numB;
 }
 
-/** Clean metadata field values */
-function sanitizeMeta(meta: Record<string, any>, folder: string): Record<string, any> {
-  return {
-    ...meta,
-    id: folder,
-    title: (meta.title || folder)
-      .replace(/\.(pptx|docx|pdf|xlsx|ppt)$/gi, "")
-      .replace(/[_-]+/g, " ")
-      .trim(),
-    subject: meta.subject === "Unknown" ? "General" : (meta.subject || "General"),
-    creation_date: meta.creation_date || meta.created_at || new Date().toISOString(),
-  };
-}
-
 export async function GET() {
+  const now = Date.now();
+  if (cache && (now - cache.timestamp) < CACHE_TTL) {
+    return NextResponse.json(cache.data);
+  }
+
   try {
     const processedDir = path.join(process.cwd(), "assets/Processed");
-    if (!fs.existsSync(processedDir)) {
-      return NextResponse.json([]);
-    }
+    if (!fs.existsSync(processedDir)) return NextResponse.json([]);
 
     const projects: any[] = [];
-    const folders = fs.readdirSync(processedDir).filter((f) => {
-      const fullPath = path.join(processedDir, f);
-      return fs.statSync(fullPath).isDirectory();
-    });
+    const folders = fs.readdirSync(processedDir).filter(f => fs.statSync(path.join(processedDir, f)).isDirectory());
 
     for (const folder of folders) {
       const folderPath = path.join(processedDir, folder);
-
-      // Locate metadata file
-      let metaPath = path.join(folderPath, "meta.json");
-      if (!fs.existsSync(metaPath)) metaPath = path.join(folderPath, "metadata.json");
-
-      // Read meta if available
-      let meta: Record<string, any> = { id: folder, title: folder };
+      const metaPath = path.join(folderPath, "metadata.json");
+      
+      let meta: any = { id: folder, title: folder, subject: "General" };
       if (fs.existsSync(metaPath)) {
         try {
-          const raw = fs.readFileSync(metaPath, "utf-8");
-          meta = JSON.parse(raw);
-        } catch {
-          console.warn(`[projects] Failed to parse ${metaPath}`);
-        }
+          meta = JSON.parse(fs.readFileSync(metaPath, "utf-8"));
+        } catch (e) { console.error(`Failed to parse meta for ${folder}`, e); }
       }
 
-      // Resolve all slide images
+      // Check for slides dynamically if not in meta or to verify
       const allFiles = fs.readdirSync(folderPath);
-      const slideFiles = allFiles
-        .filter((f) => SLIDE_REGEX.test(f))
-        .sort(naturalSort);
+      const slideFiles = allFiles.filter(f => SLIDE_REGEX.test(f)).sort(naturalSort);
 
-      // Sanitize and assemble
-      const sanitized = sanitizeMeta(meta, folder);
-      sanitized.slides = slideFiles;
-      sanitized.slide_count = slideFiles.length || sanitized.slide_count || 0;
-      sanitized.thumbnail = slideFiles[0] || null;
-      sanitized.has_slides = slideFiles.length > 0;
-
-      projects.push(sanitized);
+      projects.push({
+        ...meta,
+        id: folder,
+        slides: slideFiles,
+        slide_count: slideFiles.length || meta.slide_count || 0,
+        thumbnail: meta.thumbnail || slideFiles[0] || null,
+        has_slides: slideFiles.length > 0
+      });
     }
 
-    // Sort: newest first
-    projects.sort((a, b) => {
-      const da = new Date(a.creation_date || 0).getTime();
-      const db = new Date(b.creation_date || 0).getTime();
-      return db - da;
-    });
+    // Newest first
+    projects.sort((a, b) => new Date(b.creation_date || 0).getTime() - new Date(a.creation_date || 0).getTime());
 
-    return NextResponse.json(projects, {
-      headers: {
-        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
-      },
-    });
+    cache = { data: projects, timestamp: now };
+    return NextResponse.json(projects);
   } catch (error: any) {
-    console.error("[projects] Route error", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

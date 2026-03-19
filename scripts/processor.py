@@ -3,137 +3,128 @@ import subprocess
 import shutil
 import time
 import json
+import glob
 from datetime import datetime
-from PIL import Image, ImageDraw, ImageFont
-from sync import sync_to_cloud
+from PIL import Image
+try:
+    from pptx import Presentation
+    from docx import Document
+except ImportError:
+    Presentation = None
+    Document = None
 
-# Config
-OUTPUT_BASE = os.path.join(os.getcwd(), "assets/Processed/")
-SINCERE_NAME = "Sincere B. Archive"
-AUTHOR_FULL = "Sincere Bhattarai"
+# Paths
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+OUTPUT_BASE = os.path.join(PROJECT_ROOT, "assets/Processed/")
+RAW_DIR = os.path.join(PROJECT_ROOT, "assets/Raw")
+
+# HIGH FIDELITY SETTINGS
+SINCERE_NAME = "Sincere Bhattarai"
+OUTPUT_DPI = 150  # Increased for clarity
+WEBP_QUALITY = 85 # Shifting from 70 to 85 for sharpness
 
 def get_metadata(file_path):
-    # Try to extract metadata
-    # ...
-    # Placeholder
-    basename = os.path.basename(file_path).lower()
-    subject = "General"
-    if "computer" in basename: subject = "Computer Science"
-    elif "social" in basename: subject = "Social Studies"
-    elif "science" in basename: subject = "Science"
-    elif "math" in basename: subject = "Mathematics"
-    elif "nepali" in basename: subject = "Nepali"
-
-    return {
-        "title": os.path.basename(file_path).replace(".pptx", "").replace(".docx", "").replace(".pdf", ""),
-        "subject": subject,
-        "word_count": 0,
-        "creation_date": datetime.fromtimestamp(os.path.getctime(file_path)).isoformat(),
-        "dominant_color": "#6750A4", # Default M3 Purple
-        "time_spent": "" 
+    ext = os.path.splitext(file_path)[1].lower()
+    meta = {
+        "title": os.path.basename(file_path).replace(ext, "").replace("_", " ").replace("-", " ").title(),
+        "subject": "General",
+        "author": SINCERE_NAME,
+        "creation_date": datetime.fromtimestamp(os.path.getmtime(file_path)).isoformat(),
+        "filetype": ext.replace(".", "").upper(),
+        "keywords": [],
+        "description": ""
     }
 
-def get_dominant_color(image_path):
-    # Quick dominant color extraction using PIL
-    img = Image.open(image_path)
-    img = img.resize((1, 1))
-    color = img.getpixel((0, 0))
-    return '#{:02x}{:02x}{:02x}'.format(color[0], color[1], color[2])
+    try:
+        if ext == ".pptx" and Presentation:
+            prs = Presentation(file_path)
+            if prs.core_properties.title: meta["title"] = prs.core_properties.title
+            if prs.core_properties.subject: meta["subject"] = prs.core_properties.subject
+        elif ext == ".docx" and Document:
+            doc = Document(file_path)
+            if doc.core_properties.title: meta["title"] = doc.core_properties.title
+    except:
+        pass
 
-def watermark_image(input_path, output_path):
-    # Use ImageMagick (convert) for performance
-    # 2% opacity "Sincere Bhattarai" in the center
-    cmd = [
-        "convert", input_path,
-        "-gravity", "center", 
-        "-pointsize", "72", 
-        "-fill", "rgba(0,0,0,0.02)", 
-        "-annotate", "0", SINCERE_NAME, 
-        "-define", "webp:lossless=true",
-        output_path
-    ]
-    subprocess.run(cmd)
-
-def deep_etch_metadata(target_path):
-    # Inject Sincere Bhattarai into Author tags using ImageMagick
-    cmd = ["mogrify", "-set", "Author", AUTHOR_FULL, target_path]
-    subprocess.run(cmd)
-
-def create_teaser(images, output_path):
-    # Create an animated teaser using ffmpeg
-    if not images: return
-    # Use only first 10 slides for teaser to keep it small
-    teaser_inputs = images[:10]
+    lower_title = str(meta["title"]).lower()
+    if any(k in lower_title for k in ["computer", "code", "scratch"]): meta["subject"] = "Computer Science"
+    elif any(k in lower_title for k in ["social", "history", "nepal"]): meta["subject"] = "Social Studies"
+    elif any(k in lower_title for k in ["science", "bio", "chem"]): meta["subject"] = "Science"
+    elif any(k in lower_title for k in ["math", "logic"]): meta["subject"] = "Mathematics"
     
-    # ffmpeg expects images via pipe or patterned naming.
-    # We can pipe them.
-    cmd = [
-        "ffmpeg", "-y", "-framerate", "1",
-        "-i", "pipe:0",
-        "-c:v", "libvpx-vp9",
-        "-pix_fmt", "yuva420p",
-        "-b:v", "1M",
-        output_path
-    ]
-    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    if p.stdin:
-        for img_path in teaser_inputs:
-            with open(img_path, "rb") as f:
-                p.stdin.write(f.read()) # pyre-ignore
-        p.stdin.close()
-    p.wait()
-    print(f"[*] Teaser generated: {output_path}")
+    return meta
 
-def process_file(file_path):
+def dominant_color(img_path):
+    try:
+        with Image.open(img_path) as img:
+            rgb = img.resize((1, 1)).getpixel((0, 0))
+            return '#{:02x}{:02x}{:02x}'.format(rgb[0], rgb[1], rgb[2])
+    except:
+        return "#000000"
+
+def process_slide(img_path, out_path):
+    # Sharp WebP conversion
+    cmd = [
+        "convert", img_path,
+        "-quality", str(WEBP_QUALITY),
+        "-define", "webp:method=6",
+        out_path
+    ]
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+def process_project(file_path):
     ext = os.path.splitext(file_path)[1].lower()
-    file_id = os.path.basename(file_path).replace(ext, "").replace(" ", "_")
-    output_dir = os.path.join(OUTPUT_BASE, file_id)
-    os.makedirs(output_dir, exist_ok=True)
+    if ext not in [".pptx", ".docx", ".pdf"]: return
 
-    print(f"[*] Processing {file_path} for ID {file_id}")
+    file_id = os.path.basename(file_path).replace(ext, "").replace(" ", "_")
+    out_dir = os.path.join(OUTPUT_BASE, file_id)
+    os.makedirs(out_dir, exist_ok=True)
+
+    print(f"[*] Processing (High-Fi): {file_id}")
     
-    # 1. Convert to PDF using LibreOffice
-    pdf_path = os.path.join(output_dir, f"{file_id}.pdf")
-    subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", output_dir, file_path])
+    pdf_path = os.path.join(out_dir, "archive.pdf")
+    if ext == ".pdf":
+        shutil.copy2(file_path, pdf_path)
+    else:
+        subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", out_dir, file_path], 
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        actual_pdf = os.path.join(out_dir, os.path.basename(file_path).replace(ext, ".pdf"))
+        if os.path.exists(actual_pdf) and actual_pdf != pdf_path:
+            shutil.move(actual_pdf, pdf_path)
+
+    # High Resolution Extraction
+    img_prefix = os.path.join(out_dir, "slide")
+    subprocess.run(["pdftoppm", "-png", "-rx", str(OUTPUT_DPI), "-ry", str(OUTPUT_DPI), pdf_path, img_prefix], 
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
-    # 2. PDF to Slides (High-res WebP)
-    # Using pdftoppm to get PNG then convert to WebP with watermark
-    img_prefix = os.path.join(output_dir, "slide")
-    subprocess.run(["pdftoppm", "-png", "-rx", "150", "-ry", "150", pdf_path, img_prefix])
+    slides = sorted(glob.glob(os.path.join(out_dir, "*.png")))
+    slide_names = []
+    for i, png in enumerate(slides, 1):
+        name = f"slide_{i:02d}.webp"
+        slide_names.append(name)
+        process_slide(png, os.path.join(out_dir, name))
+        os.remove(png)
     
-    # 3. Process each slide
-    images = []
-    for f in sorted(os.listdir(output_dir)):
-        if f.startswith("slide") and f.endswith(".png"):
-            slide_path = os.path.join(output_dir, f)
-            webp_path = slide_path.replace(".png", ".webp")
-            watermark_image(slide_path, webp_path)
-            deep_etch_metadata(webp_path)
-            os.remove(slide_path)
-            images.append(webp_path)
-            
-    # 4. Create Teaser
-    teaser_path = os.path.join(output_dir, "teaser.webm")
-    create_teaser(images, teaser_path)
-    
-    # 5. Metadata Sync (Save locally as JSON for now)
+    if len(slide_names) > 0: os.remove(pdf_path)
+
     meta = get_metadata(file_path)
     meta["id"] = file_id
-    meta["slide_count"] = len(images)
-    teaser_filename = "teaser.webm"
-    meta["teaser"] = teaser_filename if os.path.exists(os.path.join(output_dir, teaser_filename)) else None
+    meta["slides"] = slide_names
+    meta["slide_count"] = len(slide_names)
+    meta["thumbnail"] = "slide_01.webp" if slide_names else None
     
-    # Estimate time spent: 15m per slide + 2h base
-    total_minutes = (len(images) * 15) + 120
-    meta["time_spent"] = f"{total_minutes // 60}h {total_minutes % 60}m"
-
-    if images:
-        meta["dominant_color"] = get_dominant_color(images[0])
+    if slide_names:
+        meta["dominant_color"] = dominant_color(os.path.join(out_dir, "slide_01.webp"))
     
-    with open(os.path.join(output_dir, "metadata.json"), "w") as f:
+    with open(os.path.join(out_dir, "metadata.json"), "w") as f:
         json.dump(meta, f, indent=4)
-    
-    # Cloud Sync
-    sync_to_cloud(file_id, output_dir)
-    
-    print(f"[+] Finished processing and syncing {file_id}")
+        
+    print(f"[+] Sharp Assets Created: {file_id}")
+
+if __name__ == "__main__":
+    if not os.path.exists(RAW_DIR):
+        print(f"[!] Raw directory not found at: {RAW_DIR}")
+    else:
+        for f in os.listdir(RAW_DIR):
+            process_project(os.path.join(RAW_DIR, f))
