@@ -39,9 +39,9 @@ export function StarRating({
   );
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`flex items-center gap-4 ${className}`}>
       <div
-        className="flex items-center gap-0.5"
+        className="flex items-center gap-1.5"
         onMouseLeave={() => setHovered(0)}
         aria-label={`Rating: ${value} of 5 stars`}
         role={readonly ? "img" : "group"}
@@ -56,24 +56,25 @@ export function StarRating({
               disabled={readonly || submitted}
               onClick={() => handleClick(s)}
               onMouseEnter={() => !readonly && !submitted && setHovered(s)}
-              whileTap={!readonly && !submitted ? { scale: 1.4, rotate: 15 } : {}}
-              animate={isAnimated ? { scale: [1, 1.35, 1] } : { scale: 1 }}
-              transition={isAnimated ? { delay: s * 0.07, duration: 0.3 } : {}}
-              className={`transition-colors duration-150 focus:outline-none ${
+              whileTap={!readonly && !submitted ? { scale: 1.5, rotate: 15 } : {}}
+              animate={isAnimated ? { scale: [1, 1.4, 1] } : { scale: 1 }}
+              transition={isAnimated ? { delay: s * 0.05, duration: 0.4 } : {}}
+              className={`transition-all duration-300 focus:outline-none ${
                 readonly || submitted ? "cursor-default" : "cursor-pointer"
               }`}
               aria-label={`${s} star${s !== 1 ? "s" : ""}`}
             >
               <Star
                 size={size}
-                fill={filled ? "var(--fg)" : "none"}
-                className={`transition-all duration-150 ${
+                fill={filled ? "currentColor" : "none"}
+                strokeWidth={filled ? 0 : 2}
+                className={`transition-all duration-300 ${
                   filled
-                    ? "text-[var(--fg)] drop-shadow-[0_0_8px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
-                    : "text-[var(--border)]"
+                    ? "text-[var(--m3-primary)] drop-shadow-lg"
+                    : "text-[var(--m3-outline)] opacity-30"
                 } ${
                   !readonly && !submitted && hovered >= s
-                    ? "scale-110"
+                    ? "scale-110 opacity-100"
                     : ""
                 }`}
               />
@@ -86,10 +87,10 @@ export function StarRating({
         {showLabel && active > 0 && (
           <motion.span
             key={active}
-            initial={{ opacity: 0, x: -4 }}
+            initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 4 }}
-            className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--fg)]"
+            exit={{ opacity: 0, x: 8 }}
+            className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--m3-primary)] italic"
           >
             {LABELS[active]}
           </motion.span>
@@ -97,8 +98,8 @@ export function StarRating({
       </AnimatePresence>
 
       {showCount && count > 0 && (
-        <span className="text-[10px] font-black italic opacity-20 tracking-tighter">
-          ({count})
+        <span className="text-[10px] font-black italic opacity-30 tracking-tighter uppercase font-mono">
+          Reg: {count}
         </span>
       )}
     </div>
@@ -109,7 +110,7 @@ export function StarRating({
 export function StarDisplay({
   value,
   count,
-  size = 12,
+  size = 14,
 }: {
   value: number;
   count?: number;
@@ -117,12 +118,17 @@ export function StarDisplay({
 }) {
   if (!value) return null;
   return (
-    <div className="flex items-center gap-3">
-      <Star size={size} fill="var(--fg)" className="text-[var(--fg)] opacity-100 drop-shadow-[0_0_4px_rgba(0,0,0,0.1)]" />
-      <span className="text-[10px] font-black text-[var(--fg-muted)] uppercase tracking-widest italic leading-none">
-        {value.toFixed(1)} protocol
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-1">
+        <Star size={size} fill="var(--m3-primary)" className="text-[var(--m3-primary)] drop-shadow-md" strokeWidth={0} />
+        <span className="text-sm font-black text-[var(--m3-primary)] uppercase tracking-tighter">
+          {value.toFixed(1)}
+        </span>
+      </div>
+      <span className="text-[10px] font-black text-[var(--m3-on-surface-variant)] opacity-40 uppercase tracking-[0.2em] italic leading-none pt-0.5">
+        Protocol Status
         {count !== undefined && count > 0 && (
-          <span className="font-medium opacity-20"> ({count})</span>
+          <span className="font-mono"> [{count}]</span>
         )}
       </span>
     </div>

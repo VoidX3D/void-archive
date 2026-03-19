@@ -1,0 +1,17 @@
+{
+    "title": "Science Survey",
+    "subject": "Science",
+    "author": "Sincere Bhattarai",
+    "creation_date": "2026-03-19T07:17:58",
+    "filetype": "DOCX",
+    "keywords": [],
+    "description": "",
+    "id": "Science_Survey",
+    "slides": [
+        "slide_01.webp",
+        "slide_02.webp"
+    ],
+    "slide_count": 2,
+    "thumbnail": "slide_01.webp",
+    "dominant_color": "#fafafa"
+}

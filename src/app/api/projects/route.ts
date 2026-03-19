@@ -21,17 +21,17 @@ export async function GET() {
   }
 
   try {
-    const processedDir = path.join(process.cwd(), "assets/Processed");
-    if (!fs.existsSync(processedDir)) return NextResponse.json([]);
+    const processedPath = path.join(process.cwd(), "public", "assets", "Processed");
+    if (!fs.existsSync(processedPath)) return NextResponse.json([]);
 
     const projects: any[] = [];
-    const folders = fs.readdirSync(processedDir).filter(f => fs.statSync(path.join(processedDir, f)).isDirectory());
+    const projectFolders = fs.readdirSync(processedPath).filter(f => fs.statSync(path.join(processedPath, f)).isDirectory());
 
-    const rawDir = path.join(process.cwd(), "assets/Raw");
-    const rawFiles = fs.existsSync(rawDir) ? fs.readdirSync(rawDir) : [];
+    const rawPath = path.join(process.cwd(), "public", "assets", "Raw");
+    const rawFiles = fs.existsSync(rawPath) ? fs.readdirSync(rawPath) : [];
 
-    for (const folder of folders) {
-      const folderPath = path.join(processedDir, folder);
+    for (const folder of projectFolders) {
+      const folderPath = path.join(processedPath, folder);
       const metaPath = path.join(folderPath, "metadata.json");
       
       let meta: any = { id: folder, title: folder, subject: "General" };

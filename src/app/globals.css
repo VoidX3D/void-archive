@@ -1,134 +1,210 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-/* ===== GLOSSY MINIMALISM (VoidOS v2.5) ===== */
+/* 
+ * MATERIAL 3 DESIGN SYSTEM (M3E) 
+ */
+
 :root {
-  --bg: #FFFFFF;
-  --fg: #000000;
-  --fg-muted: #666666;
-  --primary: #000000;
-  --accent: #333333;
-  --surface: #F9F9F9;
-  --border: rgba(0, 0, 0, 0.08);
-  --glass: rgba(255, 255, 255, 0.8);
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  /* LIGHT SCHEME (M3 Default) */
+  --m3-primary: #6750A4;
+  --m3-on-primary: #FFFFFF;
+  --m3-primary-container: #EADDFF;
+  --m3-on-primary-container: #21005D;
+  
+  --m3-secondary: #625B71;
+  --m3-on-secondary: #FFFFFF;
+  --m3-secondary-container: #E8DEF8;
+  --m3-on-secondary-container: #1D192B;
+  
+  --m3-tertiary: #7D5260;
+  --m3-on-tertiary: #FFFFFF;
+  --m3-tertiary-container: #FFD8E4;
+  --m3-on-tertiary-container: #31111D;
+  
+  --m3-error: #B3261E;
+  --m3-on-error: #FFFFFF;
+  --m3-error-container: #F9DEDC;
+  --m3-on-error-container: #410E0B;
+  
+  --m3-surface: #FEF7FF;
+  --m3-on-surface: #1D1B20;
+  --m3-surface-variant: #E7E0EB;
+  --m3-on-surface-variant: #49454F;
+  --m3-outline: #79747E;
+  
+  /* Containers levels (Neutral) */
+  --m3-surface-container-lowest: #FFFFFF;
+  --m3-surface-container-low: #F7F2FA;
+  --m3-surface-container: #F3EDF7;
+  --m3-surface-container-high: #ECE6F0;
+  --m3-surface-container-highest: #E6E0E9;
+
+  /* Aliases for convenience */
+  --bg: var(--m3-surface);
+  --fg: var(--m3-on-surface);
+  --fg-subtitle: var(--m3-on-surface-variant);
+  --surface: var(--m3-surface-container-low);
+  --border: var(--m3-outline);
+  --primary: var(--m3-primary);
+  --primary-on: var(--m3-on-primary);
 }
 
 .dark {
-  --bg: #000000;
-  --fg: #FFFFFF;
-  --fg-muted: #BBBBBB;
-  --primary: #FFFFFF;
-  --accent: #CCCCCC;
-  --surface: #111111;
-  --border: rgba(255, 255, 255, 0.1);
-  --glass: rgba(0, 0, 0, 0.85);
+  /* DARK SCHEME (M3 Default) */
+  --m3-primary: #D0BCFF;
+  --m3-on-primary: #381E72;
+  --m3-primary-container: #4F378B;
+  --m3-on-primary-container: #EADDFF;
+  
+  --m3-secondary: #CCC2DC;
+  --m3-on-secondary: #332D41;
+  --m3-secondary-container: #4A4458;
+  --m3-on-secondary-container: #E8DEF8;
+  
+  --m3-tertiary: #EFB8C8;
+  --m3-on-tertiary: #492532;
+  --m3-tertiary-container: #633B48;
+  --m3-on-tertiary-container: #FFD8E4;
+  
+  --m3-error: #F2B8B5;
+  --m3-on-error: #601410;
+  --m3-error-container: #8C1D18;
+  --m3-on-error-container: #F9DEDC;
+  
+  --m3-surface: #141218;
+  --m3-on-surface: #E6E1E5;
+  --m3-surface-variant: #49454F;
+  --m3-on-surface-variant: #CAC4D0;
+  --m3-outline: #938F99;
+  
+  /* Containers levels (Neutral) */
+  --m3-surface-container-lowest: #0F0D13;
+  --m3-surface-container-low: #1D1B20;
+  --m3-surface-container: #211F26;
+  --m3-surface-container-high: #2B2930;
+  --m3-surface-container-highest: #36343B;
+
+  /* Aliases for convenience */
+  --bg: var(--m3-surface);
+  --fg: var(--m3-on-surface);
+  --fg-subtitle: var(--m3-on-surface-variant);
+  --surface: var(--m3-surface-container-low);
+  --border: var(--m3-outline);
+  --primary: var(--m3-primary);
+  --primary-on: var(--m3-on-primary);
 }
 
-/* ===== BASE STYLES ===== */
+/* 
+ * GLOBAL STYLES 
+ */
+
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  cursor: crosshair;
-}
-
-a, button, [role="button"], input[type="submit"] {
-  cursor: pointer !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html, body {
   background: var(--bg);
   color: var(--fg);
-  font-family: 'Outfit', var(--font-sans);
+  font-family: var(--font-outfit), sans-serif;
   overflow-x: hidden;
   height: 100%;
   width: 100%;
-  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s cubic-bezier(0.2, 0, 0, 1), 
+              color 0.4s cubic-bezier(0.2, 0, 0, 1);
   scroll-behavior: smooth;
 }
 
-body {
-  display: flex;
-  flex-direction: column;
+/* 
+ * TYPOGRAPHY (M3 Inspired) 
+ */
+
+h1, .display-large { font-size: 3.5rem; line-height: 4rem; font-weight: 500; letter-spacing: -0.02em; }
+h2, .headline-large { font-size: 2rem; line-height: 2.5rem; font-weight: 500; letter-spacing: -0.01em; }
+h3, .headline-small { font-size: 1.5rem; line-height: 2rem; font-weight: 500; }
+.body-large { font-size: 1rem; line-height: 1.5rem; font-weight: 400; letter-spacing: 0.01em; }
+.label-large { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; letter-spacing: 0.01em; }
+
+/* 
+ * ANIMATIONS (PROEPRO) 
+ */
+
+.proepro-enter {
+  animation: enter-anim 0.6s cubic-bezier(0.2, 0, 0, 1) forwards;
 }
 
-::selection {
-  background: var(--fg);
-  color: var(--bg);
+@keyframes enter-anim {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== GLOSSY UTILITIES ===== */
-.glass {
-  background: var(--glass);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid var(--border);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+/* 
+ * MATERIAL 3 COMPONENTS (CUSTOM UTILITIES) 
+ */
+
+.m3-card {
+  background: var(--m3-surface-container-high);
+  border-radius: 28px;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+  border: 1px solid transparent;
 }
 
-.glass::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  z-index: 10;
-}
-
-.surface-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-}
-
-.surface-card:hover {
-  background: var(--bg);
+.m3-card:hover {
+  background: var(--m3-surface-container-highest);
   transform: translateY(-2px);
-  border-color: var(--fg);
-  box-shadow: 0 20px 48px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--m3-surface-variant);
 }
 
-/* Sizing fixes for Museum View */
-.view-container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: black;
+.m3-button-filled {
+  background: var(--m3-primary);
+  color: var(--m3-on-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 100px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  cursor: pointer;
 }
 
-/* Hide Scrollbar */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Custom Scrollbar (Minimalist) */
-::-webkit-scrollbar { width: 3px; height: 3px; }
-::-webkit-scrollbar-thumb { background: var(--fg-muted); border-radius: 10px; }
-
-/* Animations */
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+.m3-button-filled:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  filter: brightness(110%);
 }
 
-.gloss-shimmer {
-  position: relative;
-  overflow: hidden;
+.m3-button-text {
+  color: var(--m3-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 
-.gloss-shimmer::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  animation: shimmer 3s infinite;
+.m3-button-text:hover {
+  background: rgba(var(--m3-primary), 0.08);
 }
+
+/* Glassmorphism Refined */
+.glass {
+  background: rgba(var(--m3-surface-container-low), 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--m3-surface-variant);
+}
+
+/* CUSTOM SCROLLBAR M3 */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--m3-outline); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: var(--m3-primary); }
 
 @theme {
-  --font-sans: 'Outfit', sans-serif;
+  --font-sans: var(--font-outfit), sans-serif;
+  --radius-m3: 28px;
 }

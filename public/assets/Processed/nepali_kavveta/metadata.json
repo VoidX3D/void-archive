@@ -1,0 +1,17 @@
+{
+    "title": "Word Document",
+    "subject": "General",
+    "author": "Sincere Bhattarai",
+    "creation_date": "2026-03-15T08:14:38",
+    "filetype": "DOCX",
+    "keywords": [],
+    "description": "",
+    "id": "nepali_kavveta",
+    "slides": [
+        "slide_01.webp",
+        "slide_02.webp"
+    ],
+    "slide_count": 2,
+    "thumbnail": "slide_01.webp",
+    "dominant_color": "#f6f6f6"
+}
